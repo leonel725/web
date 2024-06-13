@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Factura de Restaurante</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 10px;
+            font-size: 12px; /* Tamaño de fuente más pequeño */
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+        }
+        table, th, td {
+            border: 1px solid black;
+            padding: 5px; /* Reducir el espacio entre celdas */
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .section {
+            margin-bottom: 10px;
+        }
+        h1, h2 {
+            font-size: 14px; /* Tamaño de título un poco más grande */
+            margin-bottom: 5px;
+        }
+        p {
+            margin: 3px 0; /* Reducir el espacio entre párrafos */
+        }
+        hr {
+            margin: 5px 0; /* Reducir el espacio entre líneas horizontales */
+        }
+        button {
+            font-size: 12px; /* Tamaño de botón más pequeño */
+            padding: 3px 8px; /* Ajustar el tamaño del botón */
+        }
+    </style>
+</head>
+<body>
+    <div class="section">
+        <h1>Restaurante D'licias</h1>
+        <p>Nombre del dueño: Carlos Alberto Arrieta García</p>
+        <p>Cédula: 155814623812</p>
+        <p>Tel: 61527289</p>
+        <hr>
+    </div>
+
+    <div class="section">
+        <h2>Factura</h2>
+        <div id="facturaSection">
+            <!-- Aquí se mostrará la factura -->
+        </div>
+        <button onclick="imprimirFactura()">Imprimir Factura</button>
+    </div>
+
+    <script>
+        let itemsFactura = [];
+
+        function agregarItemFactura(nombre, precio, tipo = 'platillo') {
+            let asociado = '';
+            if (tipo === 'extra' || tipo === 'salsa') {
+                asociado = prompt('Ingrese el nombre del platillo al que se asocia este extra/salsa:');
+                if (!asociado) return;
+                nombre += ` (para ${asociado})`;
+            }
+            itemsFactura.push({ nombre, precio });
+            actualizarVistaFactura();
+        }
+
+        function eliminarItemFactura(index) {
+            itemsFactura.splice(index, 1);
+            actualizarVistaFactura();
+        }
+
+        function actualizarVistaFactura() {
+            const facturaSection = document.getElementById('facturaSection');
+            let subtotal = 0;
+            facturaSection.innerHTML = `
+                <table id="facturaItems">
+                    <tr>
+                        <th>Ítem</th>
+                        <th>Precio</th>
+                        <th>Acción</th>
+                    </tr>
+                    ${itemsFactura.map((item, index) => `
+                        <tr>
+                            <td>${item.nombre}</td>
+                            <td>₡ ${item.precio.toFixed(2)}</td>
+                            <td><button onclick="eliminarItemFactura(${index})">Eliminar</button></td>
+                        </tr>
+                    `).join('')}
+                </table>
+            `;
+            subtotal = itemsFactura.reduce((acc, item) => acc + item.precio, 0);
+            facturaSection.innerHTML += `<p><strong>Total a Pagar:</strong> ₡ ${subtotal.toFixed(2)}</p>`;
+        }
+
+        function imprimirFactura() {
+            const cliente = prompt("Ingrese el nombre del cliente:");
+            if (!cliente) return;
+            const facturaWindow = window.open('', 'PRINT', 'height=600,width=400'); // Tamaño ajustado para impresión
+            let subtotal = itemsFactura.reduce((acc, item) => acc + item.precio, 0);
+            const facturaHTML = `
+                <html>
+                <head>
+                    <title>Factura</title>
+                    <style>
+                        body {
+                            font-family: Arial, sans-serif;
+                            margin: 10px;
+                            font-size: 12px;
+                        }
+                        table {
+                            width: 100%;
+                            border-collapse: collapse;
+                        }
+                        table, th, td {
+                            border: 1px solid black;
+                            padding: 5px;
+                            text-align: left;
+                        }
+                        th {
+                            background-color: #f2f2f2;
+                        }
+                        p {
+                            margin: 3px 0;
+                        }
+                        hr {
+                            margin: 5px 0;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <h1>Restaurante D'licias</h1>
+                    <p>Nombre del dueño: Carlos Alberto Arrieta García</p>
+                    <p>Cédula: 155814623812</p>
+                    <p>Tel: 61527289</p>
+                    <hr>
+                    <h2>Factura</h2>
+                    <p><strong>Cliente:</strong> ${cliente}</p>
+                    <table>
+                        <tr>
+                            <th>Descripción</th>
+                            <th>Precio</th>
+                        </tr>
+                        ${itemsFactura.map(item => `
+                            <tr>
+                                <td>${item.nombre}</td>
+                                <td>₡ ${item.precio.toFixed(2)}</td>
+                            </tr>
+                        `).join('')}
+                    </table>
+                    <hr>
+                    <p><strong>Total a Pagar:</strong> ₡ ${subtotal.toFixed(2)}</p>
+                    <p>¡Gracias por su preferencia!</p>
+                </body>
+                </html>
+            `;
+            facturaWindow.document.write(facturaHTML);
+            facturaWindow.document.close();
+            facturaWindow.print();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventario de Restaurante</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        .section {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Inventario de Restaurante</h1>
+    
+    <div class="section">
+        <h2>Platillos</h2>
+        <table id="platillos">
+            <tr>
+                <th>Platillo</th>
+                <th>Precio</th>
+                <th>Acción</th>
+            </tr>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>Bebidas</h2>
+        <table id="bebidas">
+            <tr>
+                <th>Bebida</th>
+                <th>Precio</th>
+                <th>Acción</th>
+            </tr>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>Extras</h2>
+        <table id="extras">
+            <tr>
+                <th>Extra</th>
+                <th>Precio</th>
+                <th>Acción</th>
+            </tr>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>Salsas</h2>
+        <table id="salsas">
+            <tr>
+                <th>Salsa</th>
+                <th>Precio</th>
+                <th>Acción</th>
+            </tr>
+        </table>
+    </div>
+
+    <button onclick="location.href='index.html'">Regresar</button>
+    
+    <script>
+        function addItemToTable(name, price, type) {
+            const tableId = type === 'platillo' ? 'platillos' : 
+                            type === 'bebida' ? 'bebidas' : 
+                            type === 'extra' ? 'extras' : 'salsas';
+            const table = document.getElementById(tableId);
+            const row = table.insertRow();
+            const cell1 = row.insertCell(0);
+            const cell2 = row.insertCell(1);
+            const cell3 = row.insertCell(2);
+            cell1.innerText = name;
+            cell2.innerText = `$${price.toFixed(2)}`;
+            cell3.innerHTML = `<button onclick="deleteItem(this)">Eliminar</button>`;
+        }
+
+        function deleteItem(button) {
+            const row = button.closest('tr');
+            const table = row.closest('table');
+            const tableName = table.id;
+            row.remove();
+            removeFromLocalStorage(tableName, row.cells[0].innerText);
+        }
+
+        function removeFromLocalStorage(tableName, itemName) {
+            const items = JSON.parse(localStorage.getItem(tableName)) || [];
+            const updatedItems = items.filter(item => item.name !== itemName);
+            localStorage.setItem(tableName, JSON.stringify(updatedItems));
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadItems('platillos');
+            loadItems('bebidas');
+            loadItems('extras');
+            loadItems('salsas');
+        });
+
+        function loadItems(tableName) {
+            const items = JSON.parse(localStorage.getItem(tableName)) || [];
+            items.forEach(item => {
+                addItemToTable(item.name, item.price, tableName);
+            });
+        }
+    </script>
+</body>
+</html>

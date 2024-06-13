@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Factura de Restaurante</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        table, th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .section {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Factura de Restaurante</h1>
+    
+    <div class="section">
+        <h2>Agregar Nuevo Ítem</h2>
+        <form id="addItemForm">
+            <label for="itemName">Nombre del Ítem:</label>
+            <input type="text" id="itemName" required>
+            <label for="itemPrice">Precio:</label>
+            <input type="number" id="itemPrice" step="0.01" required>
+            <label for="itemType">Tipo:</label>
+            <select id="itemType" required>
+                <option value="platillo">Platillo</option>
+                <option value="bebida">Bebida</option>
+                <option value="extra">Extra</option>
+                <option value="salsa">Salsa</option>
+            </select>
+            <button type="submit">Agregar</button>
+        </form>
+    </div>
+
+    <div class="section">
+        <h2>Platillos Disponibles</h2>
+        <table id="platillos">
+            <tr>
+                <th>Platillo</th>
+                <th>Precio</th>
+                <th>Acción</th>
+            </tr>
+            <tr>
+                <td>Arroz con Camarones</td>
+                <td>₡ 5000.00</td>
+                <td>
+                    <button onclick="agregarItemFactura('Arroz con Camarones', 5000.00)">Agregar</button>
+                    <button onclick="eliminarItemMenu(this, 'platillos')">Eliminar</button>
+                </td>
+            </tr>
+            <tr>
+                <td>Camarón al Gusto 2</td>
+                <td>₡ 4500.00</td>
+                <td>
+                    <button onclick="agregarItemFactura('Camarón al Gusto 2', 4500.00)">Agregar</button>
+                    <button onclick="eliminarItemMenu(this, 'platillos')">Eliminar</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>Bebidas Disponibles</h2>
+        <table id="bebidas">
+            <tr>
+                <th>Bebida</th>
+                <th>Precio</th>
+                <th>Acción</th>
+            </tr>
+            <tr>
+                <td>Refresco</td>
+                <td>₡ 1500.00</td>
+                <td>
+                    <button onclick="agregarItemFactura('Refresco', 1500.00)">Agregar</button>
+                    <button onclick="eliminarItemMenu(this, 'bebidas')">Eliminar</button>
+                </td>
+            </tr>
+            <tr>
+                <td>Jugo Natural</td>
+                <td>₡ 2000.00</td>
+                <td>
+                    <button onclick="agregarItemFactura('Jugo Natural', 2000.00)">Agregar</button>
+                    <button onclick="eliminarItemMenu(this, 'bebidas')">Eliminar</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>Extras Disponibles</h2>
+        <table id="extras">
+            <tr>
+                <th>Extra</th>
+                <th>Precio</th>
+                <th>Acción</th>
+            </tr>
+            <tr>
+                <td>Postre</td>
+                <td>₡ 3000.00</td>
+                <td>
+                    <button onclick="agregarItemFactura('Postre', 3000.00, 'extra')">Agregar</button>
+                    <button onclick="eliminarItemMenu(this, 'extras')">Eliminar</button>
+                </td>
+            </tr>
+            <tr>
+                <td>Papas Fritas</td>
+                <td>₡ 2500.00</td>
+                <td>
+                    <button onclick="agregarItemFactura('Papas Fritas', 2500.00, 'extra')">Agregar</button>
+                    <button onclick="eliminarItemMenu(this, 'extras')">Eliminar</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>Salsas Disponibles</h2>
+        <table id="salsas">
+            <tr>
+                <th>Salsa</th>
+                <th>Precio</th>
+                <th>Acción</th>
+            </tr>
+            <tr>
+                <td>Salsa Picante</td>
+                <td>₡ 500.00</td>
+                <td>
+                    <button onclick="agregarItemFactura('Salsa Picante', 500.00, 'salsa')">Agregar</button>
+                    <button onclick="eliminarItemMenu(this, 'salsas')">Eliminar</button>
+                </td>
+            </tr>
+            <tr>
+                <td>Salsa de Queso</td>
+                <td>₡ 800.00</td>
+                <td>
+                    <button onclick="agregarItemFactura('Salsa de Queso', 800.00, 'salsa')">Agregar</button>
+                    <button onclick="eliminarItemMenu(this, 'salsas')">Eliminar</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>Factura</h2>
+        <div id="facturaSection">
+            <!-- Aquí se mostrará la factura -->
+        </div>
+        <button onclick="imprimirFactura()">Imprimir Factura</button>
+    </div>
+
+    <button onclick="location.href='inventario.html'">Ver Inventario</button>
+    
+    <script>
+        let itemsFactura = [];
+
+        // Función para cargar los datos de localStorage al cargar la página
+        function cargarDatosDesdeLocalStorage() {
+            const storedItems = localStorage.getItem('itemsFactura');
+            if (storedItems) {
+                itemsFactura = JSON.parse(storedItems);
+                actualizarVistaFactura();
+            }
+        }
+
+        // Función para guardar los datos en localStorage
+        function guardarDatosEnLocalStorage() {
+            localStorage.setItem('itemsFactura', JSON.stringify(itemsFactura));
+        }
+
+        // Llama a la función para cargar datos al cargar la página
+        cargarDatosDesdeLocalStorage();
+
+        function agregarItemFactura(nombre, precio, tipo = 'platillo') {
+            let asociado = '';
+            if (tipo === 'extra' || tipo === 'salsa') {
+                asociado = prompt('Ingrese el nombre del platillo al que se asocia este extra/salsa:');
+                if (!asociado) return;
+                nombre += ` (para ${asociado})`;
+            }
+            itemsFactura.push({ nombre, precio });
+            actualizarVistaFactura();
+            guardarDatosEnLocalStorage(); // Guarda los datos en localStorage después de agregar
+        }
+
+        function eliminarItemFactura(index) {
+            itemsFactura.splice(index, 1);
+            actualizarVistaFactura();
+            guardarDatosEnLocalStorage(); // Guarda los datos en localStorage después de eliminar
+        }
+
+        function eliminarItemMenu(button, tableId) {
+            const row = button.parentElement.parentElement;
+            row.remove(); // Remueve la fila del DOM
+        }
+
+        function actualizarVistaFactura() {
+            const facturaSection = document.getElementById('facturaSection');
+            let subtotal = 0;
+            facturaSection.innerHTML = `
+                <table id="facturaItems">
+                    <tr>
+                        <th>Ítem</th>
+                        <th>Precio</th>
+                        <th>Acción</th>
+                    </tr>
+                    ${itemsFactura.map((item, index) => `
+                        <tr>
+                            <td>${item.nombre}</td>
+                            <td>₡ ${item.precio.toFixed(2)}</td>
+                            <td><button onclick="eliminarItemFactura(${index})">Eliminar</button></td>
+                        </tr>
+                    `).join('')}
+                </table>
+            `;
+            subtotal = itemsFactura.reduce((acc, item) => acc + item.precio, 0);
+            facturaSection.innerHTML += `<p><strong>Total a Pagar:</strong> ₡ ${subtotal.toFixed(2)}</p>`;
+        }
+
+        document.getElementById('addItemForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const itemName = document.getElementById('itemName').value;
+            const itemPrice = parseFloat(document.getElementById('itemPrice').value);
+            const itemType = document.getElementById('itemType').value;
+            
+            if (isNaN(itemPrice)) {
+                alert('Por favor ingrese un precio válido.');
+                return;
+            }
+
+            let tableId;
+            switch (itemType) {
+                case 'platillo':
+                    tableId = 'platillos';
+                    break;
+                case 'bebida':
+                    tableId = 'bebidas';
+                    break;
+                case 'extra':
+                    tableId = 'extras';
+                    break;
+                case 'salsa':
+                    tableId = 'salsas';
+                    break;
+                default:
+                    alert('Tipo de ítem no válido.');
+                    return;
+            }
+
+            const table = document.getElementById(tableId).getElementsByTagName('tbody')[0];
+            const newRow = table.insertRow();
+            newRow.innerHTML = `
+                <td>${itemName}</td>
+                <td>₡ ${itemPrice.toFixed(2)}</td>
+                <td>
+                    <button onclick="agregarItemFactura('${itemName}', ${itemPrice}, '${itemType}')">Agregar</button>
+                    <button onclick="eliminarItemMenu(this, '${tableId}')">Eliminar</button>
+                </td>
+            `;
+
+            document.getElementById('addItemForm').reset();
+        });
+
+        function imprimirFactura() {
+            const cliente = prompt("Ingrese el nombre del cliente:");
+            if (!cliente) return;
+            const facturaWindow = window.open('', 'PRINT', 'height=600,width=800');
+            let subtotal = itemsFactura.reduce((acc, item) => acc + item.precio, 0);
+            const facturaHTML = `
+                <html>
+                <head>
+                    <title>Factura</title>
+                    <style>
+                        body {
+                            font-family: Arial, sans-serif;
+                            margin: 20px;
+                        }
+                        table {
+                            width: 100%;
+                            border-collapse: collapse;
+                        }
+                        table, th, td {
+                            border: 1px solid black;
+                            padding: 8px;
+                            text-align: left;
+                        }
+                        th {
+                            background-color: #f2f2f2;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <h1>Restaurante D'licias</h1>
+                    <hr>
+                    <h2>Factura</h2>
+                    <p><strong>Fecha:</strong> ${getCurrentDate()} <strong>Hora:</strong> ${getCurrentTime()} <strong>Folio:</strong> 10224</p>
+                    <p><strong>Cliente:</strong> ${cliente}</p>
+                    <hr>
+                    <table>
+                        <tr>
+                            <th>Descripción de los productos</th>
+                            <th>Precio</th>
+                        </tr>
+                        ${itemsFactura.map(item => `
+                            <tr>
+                                <td>${item.nombre}</td>
+                                <td>₡ ${item.precio.toFixed(2)}</td>
+                            </tr>
+                        `).join('')}
+                    </table>
+                    <hr>
+                    <p><strong>Total:</strong> ₡ ${subtotal.toFixed(2)}</p>
+                    <hr>
+                    <p>¡Gracias por su preferencia!</p>
+                </body>
+                </html>
+            `;
+            facturaWindow.document.write(facturaHTML);
+            facturaWindow.document.close();
+            facturaWindow.print();
+        }
+
+        function getCurrentDate() {
+            const today = new Date();
+            return `${today.getDate().toString().padStart(2, '0')}/${(today.getMonth() + 1).toString().padStart(2, '0')}/${today.getFullYear()}`;
+        }
+
+        function getCurrentTime() {
+            const today = new Date();
+            return `${today.getHours().toString().padStart(2, '0')}:${today.getMinutes().toString().padStart(2, '0')}:${today.getSeconds().toString().padStart(2, '0')} ${today.getHours() >= 12 ? 'PM' : 'AM'}`;
+        }
+    </script>
+</body>
+</html>
+
