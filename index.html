@@ -262,12 +262,12 @@
                         </tr>
                     </thead>
                     <tbody>
-                                               ${itemsFactura.map(item => `
-                            <tr>
-                                <td>${item.nombre}</td>
-                                <td>${item.observaciones}</td>
-                            </tr>
-                        `).join('')}
+                        ${itemsFactura.map(item => `
+                        <tr>
+                            <td>${item.nombre}</td>
+                            <td>${item.observaciones}</td>
+                        </tr>
+                    `).join('')}
                     </tbody>
                 </table>
             `;
@@ -323,7 +323,10 @@
         function imprimirFactura() {
             const cliente = prompt("Ingrese el nombre del cliente:");
             if (!cliente) return;
-            
+
+            const fecha = new Date().toLocaleDateString('es-ES');
+            const hora = new Date().toLocaleTimeString('es-ES');
+
             // Factura detallada
             const facturaDetalladaWindow = window.open('', 'PRINT', 'height=600,width=800');
             let subtotalDetallada = itemsFactura.reduce((acc, item) => acc + item.precio, 0);
@@ -384,9 +387,15 @@
                     </style>
                 </head>
                 <body>
-                    <h1>Restaurante D'licias</h1>
+                    <h1>Restaurante D´licias</h1>
+                    <p>Carlos Alberto Arrieta Garcia<br>
+                    RFC: 155814623812<br>
+                    Dirección: Plaza Paseo del Viento, Tila, Guanacaste, Costa Rica, CP 506<br>
+                    Teléfono: 72996345</p>
                     <hr>
                     <h2>Factura Detallada</h2>
+                    <p><strong>Fecha:</strong> ${fecha}</p>
+                    <p><strong>Hora de Emisión:</strong> ${hora}</p>
                     <table id="facturaItems">
                         <tr>
                             <th>Ítem</th>
@@ -472,5 +481,4 @@
     </script>
 </body>
 </html>
-
 
