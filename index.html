@@ -24,6 +24,7 @@
             border: 1px solid #ddd;
             padding: 8px;
             text-align: left;
+            color: #000000; /* Color negro para texto en tablas */
         }
         
         th {
@@ -80,10 +81,11 @@
             border: 1px solid #ddd;
             padding: 8px;
             text-align: left;
+            color: #000000; /* Color negro para texto en factura simple */
         }
         .factura-simple th {
             background-color: #f2f2f2;
-            color: #000000; /* Color negro para encabezados en factura simple */
+            color: #333;
         }
     </style>
 </head>
@@ -258,16 +260,16 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>Ítem</th>
-                            <th>Observaciones</th>
+                            <th>Ítem</th
+                                                        <th>Observaciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         ${itemsFactura.map(item => `
-                        <tr>
-                            <td>${item.nombre}</td>
-                            <td>${item.observaciones}</td>
-                        </tr>
+                            <tr>
+                                <td>${item.nombre}</td>
+                                <td>${item.observaciones}</td>
+                            </tr>
                         `).join('')}
                     </tbody>
                 </table>
@@ -355,35 +357,11 @@
                             border: 1px solid #ddd;
                             padding: 8px;
                             text-align: left;
+                            color: #000000; /* Color negro para texto en tabla */
                         }
                         th {
                             background-color: #20b2aa;
                             color: white;
-                        }
-                        .factura-simple {
-                            display: none;
-                            margin-top: 20px;
-                            border: 1px solid #ccc;
-                            padding: 10px;
-                            background-color: #fff;
-                        }
-                        .factura-simple h2 {
-                            color: #20b2aa;
-                            font-size: 18px;
-                            margin-bottom: 10px;
-                        }
-                        .factura-simple table {
-                            width: 100%;
-                            border-collapse: collapse;
-                        }
-                        .factura-simple table, .factura-simple th, .factura-simple td {
-                            border: 1px solid #ddd;
-                            padding: 8px;
-                            text-align: left;
-                        }
-                        .factura-simple th {
-                            background-color: #f2f2f2;
-                            color: #333;
                         }
                     </style>
                 </head>
@@ -447,6 +425,7 @@
                             border: 1px solid #ddd;
                             padding: 8px;
                             text-align: left;
+                            color: #000000; /* Color negro para texto en tabla */
                         }
                         th {
                             background-color: #f2f2f2;
