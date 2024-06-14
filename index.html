@@ -9,10 +9,10 @@
             font-family: Arial, sans-serif;
             margin: 20px;
             background-color: #f0f8ff;
-            color: #333;
+            color: #000000; /* Color negro para todo el texto */
         }
         h1, h2 {
-            color: #2e8b57;
+            color: #000000; /* Color negro para títulos */
         }
         table {
             width: 100%;
@@ -25,6 +25,7 @@
             padding: 8px;
             text-align: left;
         }
+        
         th {
             background-color: #20b2aa;
             color: white;
@@ -82,7 +83,7 @@
         }
         .factura-simple th {
             background-color: #f2f2f2;
-            color: #333;
+            color: #000000; /* Color negro para encabezados en factura simple */
         }
     </style>
 </head>
@@ -267,7 +268,7 @@
                             <td>${item.nombre}</td>
                             <td>${item.observaciones}</td>
                         </tr>
-                    `).join('')}
+                        `).join('')}
                     </tbody>
                 </table>
             `;
@@ -391,7 +392,7 @@
                     <p>Carlos Alberto Arrieta Garcia<br>
                     RFC: 155814623812<br>
                     Dirección: Plaza Paseo del Viento, Tila, Guanacaste, Costa Rica, CP 506<br>
-                    Teléfono: 72996345</p>
+                    Teléfono: 61527289</p>
                     <hr>
                     <h2>Factura Detallada</h2>
                     <p><strong>Fecha:</strong> ${fecha}</p>
