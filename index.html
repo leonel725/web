@@ -8,22 +8,81 @@
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
+            background-color: #f0f8ff;
+            color: #333;
+        }
+        h1, h2 {
+            color: #2e8b57;
         }
         table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
+            background-color: #fff;
         }
         table, th, td {
-            border: 1px solid black;
+            border: 1px solid #ddd;
             padding: 8px;
             text-align: left;
         }
         th {
-            background-color: #f2f2f2;
+            background-color: #20b2aa;
+            color: white;
         }
         .section {
             margin-bottom: 20px;
+            padding: 15px;
+            background-color: #e0ffff;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        button {
+            background-color: #20b2aa;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #2e8b57;
+        }
+        input[type="text"], input[type="number"], select {
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: calc(100% - 22px);
+        }
+        input[type="text"]:focus, input[type="number"]:focus, select:focus {
+            border-color: #20b2aa;
+            outline: none;
+        }
+        .factura-simple {
+            display: none;
+            margin-top: 20px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            background-color: #fff;
+        }
+        .factura-simple h2 {
+            color: #20b2aa;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        .factura-simple table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .factura-simple table, .factura-simple th, .factura-simple td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .factura-simple th {
+            background-color: #f2f2f2;
+            color: #333;
         }
     </style>
 </head>
@@ -109,6 +168,9 @@
         <div id="facturaSection">
             <!-- Aquí se mostrará la factura -->
         </div>
+        <div class="factura-simple" id="facturaSimpleSection">
+            <!-- Aquí se mostrará la factura simple -->
+        </div>
         <button onclick="imprimirFactura()">Imprimir Factura</button>
     </div>
 
@@ -153,7 +215,7 @@
                 if (!asociado) return;
                 nombre += ` (para ${asociado})`;
             }
-            itemsFactura.push({ nombre, precio });
+            itemsFactura.push({ nombre, precio, observaciones: '' });
             actualizarVistaFactura();
             guardarDatosEnLocalStorage(); // Guarda los datos en localStorage después de agregar
         }
@@ -172,12 +234,14 @@
                     <tr>
                         <th>Ítem</th>
                         <th>Precio</th>
+                        <th>Observaciones</th>
                         <th>Acción</th>
                     </tr>
                     ${itemsFactura.map((item, index) => `
                         <tr>
                             <td>${item.nombre}</td>
                             <td>₡ ${item.precio.toFixed(2)}</td>
+                            <td><input type="text" value="${item.observaciones}" onchange="actualizarObservacion(${index}, this.value)"></td>
                             <td><button onclick="eliminarItemFactura(${index})">Eliminar</button></td>
                         </tr>
                     `).join('')}
@@ -185,6 +249,33 @@
             `;
             subtotal = itemsFactura.reduce((acc, item) => acc + item.precio, 0);
             facturaSection.innerHTML += `<p><strong>Total a Pagar:</strong> ₡ ${subtotal.toFixed(2)}</p>`;
+
+            // Actualizar factura simple
+            const facturaSimpleSection = document.getElementById('facturaSimpleSection');
+            facturaSimpleSection.innerHTML = `
+                <h2>Factura Simple</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Ítem</th>
+                            <th>Observaciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                                               ${itemsFactura.map(item => `
+                            <tr>
+                                <td>${item.nombre}</td>
+                                <td>${item.observaciones}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        function actualizarObservacion(index, observacion) {
+            itemsFactura[index].observaciones = observacion;
+            guardarDatosEnLocalStorage();
         }
 
         function actualizarVistaMenu() {
@@ -232,57 +323,154 @@
         function imprimirFactura() {
             const cliente = prompt("Ingrese el nombre del cliente:");
             if (!cliente) return;
-            const facturaWindow = window.open('', 'PRINT', 'height=600,width=800');
-            let subtotal = itemsFactura.reduce((acc, item) => acc + item.precio, 0);
-            const facturaHTML = `
+            
+            // Factura detallada
+            const facturaDetalladaWindow = window.open('', 'PRINT', 'height=600,width=800');
+            let subtotalDetallada = itemsFactura.reduce((acc, item) => acc + item.precio, 0);
+            const facturaDetalladaHTML = `
                 <html>
                 <head>
-                    <title>Factura</title>
+                    <title>Factura Detallada</title>
                     <style>
                         body {
                             font-family: Arial, sans-serif;
                             margin: 20px;
+                            background-color: #f0f8ff;
+                            color: #333;
+                        }
+                        h1, h2 {
+                            color: #2e8b57;
                         }
                         table {
                             width: 100%;
                             border-collapse: collapse;
+                            margin-bottom: 20px;
+                            background-color: #fff;
                         }
                         table, th, td {
-                            border: 1px solid black;
+                            border: 1px solid #ddd;
                             padding: 8px;
                             text-align: left;
                         }
                         th {
+                            background-color: #20b2aa;
+                            color: white;
+                        }
+                        .factura-simple {
+                            display: none;
+                            margin-top: 20px;
+                            border: 1px solid #ccc;
+                            padding: 10px;
+                            background-color: #fff;
+                        }
+                        .factura-simple h2 {
+                            color: #20b2aa;
+                            font-size: 18px;
+                            margin-bottom: 10px;
+                        }
+                        .factura-simple table {
+                            width: 100%;
+                            border-collapse: collapse;
+                        }
+                        .factura-simple table, .factura-simple th, .factura-simple td {
+                            border: 1px solid #ddd;
+                            padding: 8px;
+                            text-align: left;
+                        }
+                        .factura-simple th {
                             background-color: #f2f2f2;
+                            color: #333;
                         }
                     </style>
                 </head>
                 <body>
                     <h1>Restaurante D'licias</h1>
                     <hr>
-                    <h2>Factura</h2>
+                    <h2>Factura Detallada</h2>
                     <table id="facturaItems">
                         <tr>
                             <th>Ítem</th>
                             <th>Precio</th>
+                            <th>Observaciones</th>
                         </tr>
                         ${itemsFactura.map(item => `
                             <tr>
                                 <td>${item.nombre}</td>
-                                <td>₡ ${item.precio.toFixed(2)}</td
-                                     </tr>
+                                <td>₡ ${item.precio.toFixed(2)}</td>
+                                <td>${item.observaciones}</td>
+                            </tr>
                         `).join('')}
                     </table>
-                    <p><strong>Total a Pagar:</strong> ₡ ${subtotal.toFixed(2)}</p>
+                    <p><strong>Total a Pagar:</strong> ₡ ${subtotalDetallada.toFixed(2)}</p>
                     <p><strong>Cliente:</strong> ${cliente}</p>
                 </body>
                 </html>
             `;
-            facturaWindow.document.write(facturaHTML);
-            facturaWindow.document.close(); // Cerrar el documento para finalizar la escritura
-            facturaWindow.print(); // Mostrar el diálogo de impresión
+            facturaDetalladaWindow.document.write(facturaDetalladaHTML);
+            facturaDetalladaWindow.document.close(); // Cerrar el documento para finalizar la escritura
+            facturaDetalladaWindow.print(); // Mostrar el diálogo de impresión
+
+            // Factura simple
+            const facturaSimpleWindow = window.open('', 'PRINT', 'height=600,width=800');
+            const facturaSimpleHTML = `
+                <html>
+                <head>
+                    <title>Factura Simple</title>
+                    <style>
+                        body {
+                            font-family: Arial, sans-serif;
+                            margin: 20px;
+                            background-color: #fff;
+                            color: #333;
+                        }
+                        h2 {
+                            color: #20b2aa;
+                            font-size: 18px;
+                            margin-bottom: 10px;
+                        }
+                        table {
+                            width: 100%;
+                            border-collapse: collapse;
+                            margin-bottom: 20px;
+                        }
+                        table, th, td {
+                            border: 1px solid #ddd;
+                            padding: 8px;
+                            text-align: left;
+                        }
+                        th {
+                            background-color: #f2f2f2;
+                            color: #333;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <h2>Factura Simple</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Ítem</th>
+                                <th>Observaciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${itemsFactura.map(item => `
+                                <tr>
+                                    <td>${item.nombre}</td>
+                                    <td>${item.observaciones}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </body>
+                </html>
+            `;
+            facturaSimpleWindow.document.write(facturaSimpleHTML);
+            facturaSimpleWindow.document.close();
+            facturaSimpleWindow.print();
         }
     </script>
 </body>
 </html>
+
 
