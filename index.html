@@ -3,462 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Factura de Restaurante</title>
+    <title>¿Quieres ser mi novia?</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f0f8ff;
-            color: #000000; /* Color negro para todo el texto */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #ffe6e6;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            text-align: center;
         }
-        h1, h2 {
-            color: #000000; /* Color negro para títulos */
+
+        .container {
+            position: relative;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-            background-color: #fff;
+
+        h1 {
+            color: #ff66b2;
         }
-        table, th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-            color: #000000; /* Color negro para texto en tablas */
+
+        .buttons {
+            margin-top: 20px;
         }
-        
-        th {
-            background-color: #20b2aa;
-            color: white;
-        }
-        .section {
-            margin-bottom: 20px;
-            padding: 15px;
-            background-color: #e0ffff;
-            border-radius: 5px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        button {
-            background-color: #20b2aa;
-            color: white;
-            padding: 10px 15px;
+
+        .button {
+            padding: 10px 20px;
+            font-size: 18px;
+            margin: 5px;
+            cursor: pointer;
             border: none;
             border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
         }
-        button:hover {
-            background-color: #2e8b57;
+
+        .yes {
+            background-color: #ff66b2;
+            color: white;
         }
-        input[type="text"], input[type="number"], select {
-            padding: 10px;
-            margin: 5px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            width: calc(100% - 22px);
+
+        .no {
+            background-color: #cccccc;
+            color: black;
         }
-        input[type="text"]:focus, input[type="number"]:focus, select:focus {
-            border-color: #20b2aa;
-            outline: none;
+
+        @keyframes move {
+            0% { transform: translate(0, 0); }
+            25% { transform: translate(100px, 0); }
+            50% { transform: translate(100px, 100px); }
+            75% { transform: translate(0, 100px); }
+            100% { transform: translate(0, 0); }
         }
-        .factura-simple {
+
+        .move {
+            animation: move 2s infinite;
+        }
+
+        .hidden {
             display: none;
-            margin-top: 20px;
-            border: 1px solid #ccc;
-            padding: 10px;
-            background-color: #fff;
         }
-        .factura-simple h2 {
-            color: #20b2aa;
-            font-size: 18px;
-            margin-bottom: 10px;
+
+        .center {
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
-        .factura-simple table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .factura-simple table, .factura-simple th, .factura-simple td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-            color: #000000; /* Color negro para texto en factura simple */
-        }
-        .factura-simple th {
-            background-color: #f2f2f2;
-            color: #333;
+
+        .result {
+            font-size: 24px;
+            color: #ff66b2;
         }
     </style>
 </head>
 <body>
-    <h1>Factura de Restaurante</h1>
-    
-    <div class="section">
-        <h2>Agregar Nuevo Ítem</h2>
-        <form id="addItemForm">
-            <label for="itemName">Nombre del Ítem:</label>
-            <input type="text" id="itemName" required>
-            <label for="itemPrice">Precio:</label>
-            <input type="number" id="itemPrice" step="0.01" required>
-            <label for="itemType">Tipo:</label>
-            <select id="itemType" required>
-                <option value="platillo">Platillo</option>
-                <option value="bebida">Bebida</option>
-                <option value="extra">Extra</option>
-                <option value="salsa">Salsa</option>
-            </select>
-            <button type="submit">Agregar</button>
-        </form>
-    </div>
-
-    <div class="section">
-        <h2>Platillos Disponibles</h2>
-        <table id="platillos">
-            <thead>
-                <tr>
-                    <th>Platillo</th>
-                    <th>Precio</th>
-                    <th>Acción</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-    </div>
-
-    <div class="section">
-        <h2>Bebidas Disponibles</h2>
-        <table id="bebidas">
-            <thead>
-                <tr>
-                    <th>Bebida</th>
-                    <th>Precio</th>
-                    <th>Acción</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-    </div>
-
-    <div class="section">
-        <h2>Extras Disponibles</h2>
-        <table id="extras">
-            <thead>
-                <tr>
-                    <th>Extra</th>
-                    <th>Precio</th>
-                    <th>Acción</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-    </div>
-
-    <div class="section">
-        <h2>Salsas Disponibles</h2>
-        <table id="salsas">
-            <thead>
-                <tr>
-                    <th>Salsa</th>
-                    <th>Precio</th>
-                    <th>Acción</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-    </div>
-
-    <div class="section">
-        <h2>Factura</h2>
-        <div id="facturaSection">
-            <!-- Aquí se mostrará la factura -->
+    <div class="container">
+        <h1>¿Quieres ser mi novia?</h1>
+        <div class="buttons">
+            <button class="button yes" onclick="handleYes()">Sí</button>
+            <button class="button no move" onclick="handleNo()">No</button>
         </div>
-        <div class="factura-simple" id="facturaSimpleSection">
-            <!-- Aquí se mostrará la factura simple -->
-        </div>
-        <button onclick="imprimirFactura()">Imprimir Factura</button>
+        <div id="result" class="hidden center result"></div>
     </div>
 
-    <button onclick="location.href='inventario.html'">Ver Inventario</button>
-    
     <script>
-        let itemsFactura = [];
-        let itemsMenu = {
-            platillos: [],
-            bebidas: [],
-            extras: [],
-            salsas: []
-        };
-
-        // Función para cargar los datos de localStorage al cargar la página
-        function cargarDatosDesdeLocalStorage() {
-            const storedItemsFactura = localStorage.getItem('itemsFactura');
-            if (storedItemsFactura) {
-                itemsFactura = JSON.parse(storedItemsFactura);
-                actualizarVistaFactura();
-            }
-            const storedItemsMenu = localStorage.getItem('itemsMenu');
-            if (storedItemsMenu) {
-                itemsMenu = JSON.parse(storedItemsMenu);
-                actualizarVistaMenu();
-            }
-        }
-
-        // Función para guardar los datos en localStorage
-        function guardarDatosEnLocalStorage() {
-            localStorage.setItem('itemsFactura', JSON.stringify(itemsFactura));
-            localStorage.setItem('itemsMenu', JSON.stringify(itemsMenu));
-        }
-
-        // Llama a la función para cargar datos al cargar la página
-        cargarDatosDesdeLocalStorage();
-
-        function agregarItemFactura(nombre, precio, tipo = 'platillo') {
-            let asociado = '';
-            if (tipo === 'extra' || tipo === 'salsa') {
-                asociado = prompt('Ingrese el nombre del platillo al que se asocia este extra/salsa:');
-                if (!asociado) return;
-                nombre += ` (para ${asociado})`;
-            }
-            itemsFactura.push({ nombre, precio, observaciones: '' });
-            actualizarVistaFactura();
-            guardarDatosEnLocalStorage(); // Guarda los datos en localStorage después de agregar
-        }
-
-        function eliminarItemFactura(index) {
-            itemsFactura.splice(index, 1);
-            actualizarVistaFactura();
-            guardarDatosEnLocalStorage(); // Guarda los datos en localStorage después de eliminar
-        }
-
-        function actualizarVistaFactura() {
-            const facturaSection = document.getElementById('facturaSection');
-            let subtotal = 0;
-            facturaSection.innerHTML = `
-                <table id="facturaItems">
-                    <tr>
-                        <th>Ítem</th>
-                        <th>Precio</th>
-                        <th>Observaciones</th>
-                        <th>Acción</th>
-                    </tr>
-                    ${itemsFactura.map((item, index) => `
-                        <tr>
-                            <td>${item.nombre}</td>
-                            <td>₡ ${item.precio.toFixed(2)}</td>
-                            <td><input type="text" value="${item.observaciones}" onchange="actualizarObservacion(${index}, this.value)"></td>
-                            <td><button onclick="eliminarItemFactura(${index})">Eliminar</button></td>
-                        </tr>
-                    `).join('')}
-                </table>
-            `;
-            subtotal = itemsFactura.reduce((acc, item) => acc + item.precio, 0);
-            facturaSection.innerHTML += `<p><strong>Total a Pagar:</strong> ₡ ${subtotal.toFixed(2)}</p>`;
-
-            // Actualizar factura simple
-            const facturaSimpleSection = document.getElementById('facturaSimpleSection');
-            facturaSimpleSection.innerHTML = `
-                <h2>Factura Simple</h2>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Ítem</th
-                                                        <th>Observaciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${itemsFactura.map(item => `
-                            <tr>
-                                <td>${item.nombre}</td>
-                                <td>${item.observaciones}</td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
+        function handleYes() {
+            document.body.innerHTML = `
+                <div class="center">
+                    <div class="container">
+                        <h1>¡Qué alegría!</h1>
+                        <p class="result">Eres la persona más especial del mundo y me haces muy feliz. 🥰❤️</p>
+                        <p class="result">¡Te amo mucho!</p>
+                        <img src="https://media.giphy.com/media/3oKIPa2TdahY8U1nYA/giphy.gif" alt="felicitaciones">
+                    </div>
+                </div>
             `;
         }
 
-        function actualizarObservacion(index, observacion) {
-            itemsFactura[index].observaciones = observacion;
-            guardarDatosEnLocalStorage();
-        }
-
-        function actualizarVistaMenu() {
-            Object.keys(itemsMenu).forEach(tipo => {
-                const tableBody = document.getElementById(tipo).getElementsByTagName('tbody')[0];
-                tableBody.innerHTML = ''; // Limpiar la tabla antes de agregar los elementos
-                itemsMenu[tipo].forEach((item, index) => {
-                    const newRow = tableBody.insertRow();
-                    newRow.innerHTML = `
-                        <td>${item.nombre}</td>
-                        <td>₡ ${item.precio.toFixed(2)}</td>
-                        <td>
-                            <button onclick="agregarItemFactura('${item.nombre}', ${item.precio}, '${tipo}')">Agregar</button>
-                            <button onclick="eliminarItemMenu('${tipo}', ${index})">Eliminar</button>
-                        </td>
-                    `;
-                });
-            });
-        }
-
-        document.getElementById('addItemForm').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const itemName = document.getElementById('itemName').value;
-            const itemPrice = parseFloat(document.getElementById('itemPrice').value);
-            const itemType = document.getElementById('itemType').value;
-            
-            if (isNaN(itemPrice)) {
-                alert('Por favor ingrese un precio válido.');
-                return;
-            }
-
-            itemsMenu[itemType + 's'].push({ nombre: itemName, precio: itemPrice });
-            actualizarVistaMenu();
-            guardarDatosEnLocalStorage(); // Guarda los datos en localStorage después de agregar
-
-            document.getElementById('addItemForm').reset();
-        });
-
-        function eliminarItemMenu(tipo, index) {
-            itemsMenu[tipo].splice(index, 1);
-            actualizarVistaMenu();
-            guardarDatosEnLocalStorage(); // Guarda los datos en localStorage después de eliminar
-        }
-
-        function imprimirFactura() {
-            const cliente = prompt("Ingrese el nombre del cliente:");
-            if (!cliente) return;
-
-            const fecha = new Date().toLocaleDateString('es-ES');
-            const hora = new Date().toLocaleTimeString('es-ES');
-
-            // Factura detallada
-            const facturaDetalladaWindow = window.open('', 'PRINT', 'height=600,width=800');
-            let subtotalDetallada = itemsFactura.reduce((acc, item) => acc + item.precio, 0);
-            const facturaDetalladaHTML = `
-                <html>
-                <head>
-                    <title>Factura Detallada</title>
-                    <style>
-                        body {
-                            font-family: Arial, sans-serif;
-                            margin: 20px;
-                            background-color: #f0f8ff;
-                            color: #333;
-                        }
-                        h1, h2 {
-                            color: #2e8b57;
-                        }
-                        table {
-                            width: 100%;
-                            border-collapse: collapse;
-                            margin-bottom: 20px;
-                            background-color: #fff;
-                        }
-                        table, th, td {
-                            border: 1px solid #ddd;
-                            padding: 8px;
-                            text-align: left;
-                            color: #000000; /* Color negro para texto en tabla */
-                        }
-                        th {
-                            background-color: #20b2aa;
-                            color: white;
-                        }
-                    </style>
-                </head>
-                <body>
-                    <h1>Restaurante D´licias</h1>
-                    <p>Carlos Alberto Arrieta Garcia<br>
-                    RFC: 155814623812<br>
-                    Dirección: Plaza Paseo del Viento, Tila, Guanacaste, Costa Rica, CP 506<br>
-                    Teléfono: 61527289</p>
-                    <hr>
-                    <h2>Factura Detallada</h2>
-                    <p><strong>Fecha:</strong> ${fecha}</p>
-                    <p><strong>Hora de Emisión:</strong> ${hora}</p>
-                    <table id="facturaItems">
-                        <tr>
-                            <th>Ítem</th>
-                            <th>Precio</th>
-                            <th>Observaciones</th>
-                        </tr>
-                        ${itemsFactura.map(item => `
-                            <tr>
-                                <td>${item.nombre}</td>
-                                <td>₡ ${item.precio.toFixed(2)}</td>
-                                <td>${item.observaciones}</td>
-                            </tr>
-                        `).join('')}
-                    </table>
-                    <p><strong>Total a Pagar:</strong> ₡ ${subtotalDetallada.toFixed(2)}</p>
-                    <p><strong>Cliente:</strong> ${cliente}</p>
-                </body>
-                </html>
-            `;
-            facturaDetalladaWindow.document.write(facturaDetalladaHTML);
-            facturaDetalladaWindow.document.close(); // Cerrar el documento para finalizar la escritura
-            facturaDetalladaWindow.print(); // Mostrar el diálogo de impresión
-
-            // Factura simple
-            const facturaSimpleWindow = window.open('', 'PRINT', 'height=600,width=800');
-            const facturaSimpleHTML = `
-                <html>
-                <head>
-                    <title>Factura Simple</title>
-                    <style>
-                        body {
-                            font-family: Arial, sans-serif;
-                            margin: 20px;
-                            background-color: #fff;
-                            color: #333;
-                        }
-                        h2 {
-                            color: #20b2aa;
-                            font-size: 18px;
-                            margin-bottom: 10px;
-                        }
-                        table {
-                            width: 100%;
-                            border-collapse: collapse;
-                            margin-bottom: 20px;
-                        }
-                        table, th, td {
-                            border: 1px solid #ddd;
-                            padding: 8px;
-                            text-align: left;
-                            color: #000000; /* Color negro para texto en tabla */
-                        }
-                        th {
-                            background-color: #f2f2f2;
-                            color: #333;
-                        }
-                    </style>
-                </head>
-                <body>
-                    <h2>Factura Simple</h2>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Ítem</th>
-                                <th>Observaciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${itemsFactura.map(item => `
-                                <tr>
-                                    <td>${item.nombre}</td>
-                                    <td>${item.observaciones}</td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                </body>
-                </html>
-            `;
-            facturaSimpleWindow.document.write(facturaSimpleHTML);
-            facturaSimpleWindow.document.close();
-            facturaSimpleWindow.print();
+        function handleNo() {
+            document.body.innerHTML = `<div style="background-color: black; width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; color: white; font-size: 24px;">
+                                            <p>Error: La opción seleccionada no es válida. 💔</p>
+                                       </div>`;
         }
     </script>
 </body>
 </html>
-
